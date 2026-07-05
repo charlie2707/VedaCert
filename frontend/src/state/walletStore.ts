@@ -54,7 +54,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   },
 
   disconnect: () => {
-    set({ address: null, walletType: null });
+    set({ address: null, walletType: null, error: null });
   },
 
   switchNetwork: (network: Networks) => {
