@@ -23,6 +23,7 @@ export const VAULT_CONTRACT_ID =
   process.env.NEXT_PUBLIC_VAULT_CONTRACT_ID || 'CDX6EWYM3PZ4YJZB5ZKYX3R4M67HY5NGLOOFDXVYZD4QUPGJZK4FUXBFVAUL';
 
 export const server = new rpc.Server(RPC_URL);
+export const DUMMY_ACCOUNT = new Account('GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF', '0');
 export const horizonServer = new Horizon.Server(HORIZON_URL);
 
 export interface CertificateData {
@@ -72,7 +73,7 @@ export async function verifyCertificate(certIdHex: string): Promise<CertificateD
     
     const viewTx = await server.simulateTransaction(
       new TransactionBuilder(
-        new Account('GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF', '0'),
+        DUMMY_ACCOUNT,
         { fee: BASE_FEE.toString(), networkPassphrase: Networks.TESTNET }
       )
         .addOperation(
@@ -218,7 +219,7 @@ export async function getInstitution(institutionAddr: string): Promise<Instituti
     const contract = new Contract(REGISTRY_CONTRACT_ID);
     const viewTx = await server.simulateTransaction(
       new TransactionBuilder(
-        new Account('GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF', '0'),
+        DUMMY_ACCOUNT,
         { fee: BASE_FEE.toString(), networkPassphrase: Networks.TESTNET }
       )
         .addOperation(
