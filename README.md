@@ -171,9 +171,9 @@ VedaCert includes automated scripts to build, fund, and deploy both contracts to
 
 Below are the addresses representing the deployed contracts on Stellar Testnet:
 
-*   **Authority Registry Contract Address**: `[DECOUPLED_REGISTRY_ADDRESS_PLACEHOLDER]`
-*   **Certification Vault Contract Address**: `[PERSISTENT_VAULT_ADDRESS_PLACEHOLDER]`
-*   **Sample Genesis Transaction Hash**: `[GENESIS_TX_HASH_PLACEHOLDER]`
+*   **Authority Registry Contract Address**: `CALWNLNMOUUUNPSREV4RYMC7ZKWDLA2OQNIMVOP4VFLVN22IX2NYN6UF`
+*   **Certification Vault Contract Address**: `CAKDLCK5Q3EXGVNETR7W4J5TSFWE5EMGTG2YNM4KNX23SQGSL2PIUQFW`
+*   **Sample Genesis Transaction Hash**: `7e7fccc4a72e95596c227105b26b0f6dac6ce6f1055793ec1e938bb229faf68a`
 *   **StellarExplorer Reference**: [StellarExpert Testnet Explorer](https://stellar.expert/explorer/testnet)
 
 ---
