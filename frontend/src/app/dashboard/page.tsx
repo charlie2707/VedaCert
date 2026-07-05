@@ -1,5 +1,15 @@
 'use client';
 
+/**
+ * VedaCert Dashboard Component
+ * 
+ * Provides an administrative workspace for registered institution authorities.
+ * Features:
+ * 1. Minting Credentials: Cryptographically signs and anchors certificate hashes to Soroban.
+ * 2. Revoking Credentials: Marks certificates as revoked on-chain, rendering them permanently invalid.
+ * 3. Credential Ledger Logs: Displays a historical feed of actions, synced with local storage cache.
+ */
+
 import React, { useState, useEffect } from 'react';
 import { useWalletStore } from '../../state/walletStore';
 import { useTxStore } from '../../state/txStore';
