@@ -5,11 +5,12 @@ members = [
     "contracts/certification-vault",
 ]
 
+# Optimizations for size-constrained WASM builds in Soroban
 [profile.release]
-opt-level = "z"
-overflow-checks = true
-debug = false
-panic = "abort"
-lto = true
-codegen-units = 1
-strip = true
+opt-level = "z"          # Optimize for size
+overflow-checks = true   # Ensure arithmetic overflow checks are active
+debug = false            # Disable debug symbols to reduce size
+panic = "abort"          # Abort panic to eliminate unwinding code overhead
+lto = true               # Enable Link-Time Optimization
+codegen-units = 1        # Reduce parallel compilation blocks for better size reduction
+strip = true             # Strip binary symbols
