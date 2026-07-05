@@ -1,16 +1,23 @@
 #![no_std]
 use soroban_sdk::{contract, contractimpl, contracttype, Address, Env, String};
 
-// Role Constants
+// Decoupled Access Control Roles for Certification Authority
+// 1 = Platform Administrator: manages institutions and roles
+// 2 = Registered Institution Issuer: authorized to mint/revoke certificates
+// 3 = Auditor: has read-only verify privileges and logs validation
 pub const ROLE_ADMIN: u32 = 1;
 pub const ROLE_ISSUER: u32 = 2;
 pub const ROLE_AUDITOR: u32 = 3;
 
+/// Institution configuration configuration values stored persistently.
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct InstitutionConfig {
+    /// Friendly name of the institution (e.g. "Stellar Academy")
     pub name: String,
+    /// Authorized RBAC level (ROLE_ADMIN, ROLE_ISSUER, or ROLE_AUDITOR)
     pub role: u32,
+    /// Active state flag. Suspended institutions cannot mint.
     pub is_active: bool,
 }
 
