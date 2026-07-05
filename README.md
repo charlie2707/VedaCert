@@ -1,4 +1,4 @@
-<h1 align="center">🛡️ VedaCert Credentialing 🔗</h1>
+<h1 align="center">VedaCert Credentialing</h1>
 
 <p align="center">
   <strong>A Decentralized, Tamper-Proof Credential Verification Platform built on the Stellar network using decoupled Soroban smart contracts.</strong>
@@ -34,7 +34,7 @@
 
 ---
 
-## 📌 Table of Contents
+## Table of Contents
 
 * [1. Product Overview & Problem Statement](#overview)
   * [The Problem](#the-problem)
@@ -64,7 +64,7 @@
 ---
 
 <a name="overview"></a>
-## 🔍 1. Product Overview & Problem Statement
+## 1. Product Overview & Problem Statement
 
 ### The Problem
 Traditional educational credentials and enterprise certificates rely on centralized databases or paper verification, which are vulnerable to record tampering, database leaks, and validation latencies. Institutions must maintain expensive validation APIs, and verifiers must manually request verification, causing settlement times of days or weeks.
@@ -78,7 +78,7 @@ VedaCert resolves these structural limitations using:
 ---
 
 <a name="tech-stack"></a>
-## 🛠️ 2. Technical Stack
+## 2. Technical Stack
 
 * **Smart Contracts:** Rust, Soroban SDK
 * **Frontend:** Next.js 15 (App Router), TypeScript, Tailwind CSS, lucide-react
@@ -90,7 +90,7 @@ VedaCert resolves these structural limitations using:
 ---
 
 <a name="directory-structure"></a>
-## 📂 3. Directory Structure
+## 3. Directory Structure
 
 ```
 VedaCert/
@@ -126,7 +126,7 @@ VedaCert/
 ---
 
 <a name="architecture"></a>
-## 🏛️ 4. Technical Architecture & Component Flow
+## 4. Technical Architecture & Component Flow
 
 <a name="decoupled-flow"></a>
 ### 1. Decoupled Access Control Flow
@@ -185,7 +185,7 @@ sequenceDiagram
 ---
 
 <a name="storage-design"></a>
-## ⚙️ 5. Smart Contract Storage Design
+## 5. Smart Contract Storage Design
 
 * **Instance Storage**: Used for configuration flags, referencing target contract variables, and owner parameters (e.g. `Admin` in the registry and `Owner`/`Registry` references in the vault) to optimize transaction footprints.
 * **Persistent Storage**: Holds registry institution profiles (`InstitutionConfig`) and hash verification structures (`CertificateData`) with Soroban state leases to guarantee permanent storage integrity.
@@ -193,7 +193,7 @@ sequenceDiagram
 ---
 
 <a name="development"></a>
-## 🚀 6. Local Development & Testing
+## 6. Local Development & Testing
 
 ### Prerequisites
 * Rust & Cargo (with `wasm32-unknown-unknown` target configured)
@@ -218,7 +218,7 @@ npm run dev
 ---
 
 <a name="deployment-guide"></a>
-## 🛰️ 7. Stellar Testnet Deployment Guide (Manual)
+## 7. Stellar Testnet Deployment Guide (Manual)
 
 ### Step 1: Configure Deployer Identity
 Generate and fund a test account:
@@ -291,7 +291,7 @@ stellar contract invoke \
 ---
 
 <a name="verification"></a>
-## 📜 8. Deployed Contract Verification
+## 8. Deployed Contract Verification
 
 ### Contract Addresses
 * **Authority Registry Contract**: `CALO4ABMH7IZBV5HBHOFUGQRZSB6AMLU4YQHABG23NVJ5PEQJC22L2NK`
@@ -305,7 +305,7 @@ stellar contract invoke \
 ---
 
 <a name="security"></a>
-## 🔒 9. Security Considerations
+## 9. Security Considerations
 
 * **Decoupled Roles checks**: Dynamic role validations checked dynamically using C2C calls during validation steps.
 * **Storage Leases**: Automated persistent storage leases built directly to prevent state deletion.
@@ -313,7 +313,7 @@ stellar contract invoke \
 ---
 
 <a name="screenshots"></a>
-## 📸 10. Project Media & Screenshots
+## 10. Project Media & Screenshots
 
 ### Deployed Smart Contracts CLI Outputs
 1. **Authority Registry Deployment on Testnet**
