@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+:root {
+  --background: #030303;      /* Deep obsidian black */
+  --foreground: #f4f4f5;      /* Off-white */
+  
+  /* Primary White Accents (Monochromatic Web3 feel) */
+  --primary: #ffffff;
+  --primary-glow: rgba(255, 255, 255, 0.08);
+  --accent: #e4e4e7;
+  
+  /* Premium Glass Surfaces */
+  --glass-bg: rgba(10, 10, 12, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-border-hover: rgba(255, 255, 255, 0.12);
+  
+  /* Translucent Fluorescent Status Indicators */
+  --color-info: #06b6d4;      /* Electric Cyan */
+  --color-warning: #f59e0b;   /* Warm Amber */
+  --color-success: #10b981;   /* Emerald Green */
+  --color-inactive: #71717a;  /* Zinc Grey */
+  
+  --radius-lg: 16px;
+  --radius-md: 10px;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
+  --color-glass-border-hover: var(--glass-border-hover);
+  --color-info: var(--color-info);
+  --color-warning: var(--color-warning);
+  --color-success: var(--color-success);
+  --color-inactive: var(--color-inactive);
+  --radius-lg: var(--radius-lg);
+  --radius-md: var(--radius-md);
+  
+  --animate-pulse-glow: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.1));
+  }
+  50% {
+    opacity: .5;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-panel:hover {
+  border-color: var(--glass-border-hover);
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  color: var(--foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--glass-border-hover);
+}
+
+.glow-text {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.neon-border-cyan {
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
+  border-color: rgba(6, 182, 212, 0.3);
+}
+
+.neon-border-green {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.neon-border-amber {
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+/* Glowing dot style */
+.glow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.glow-dot::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  animation: dot-glow 1.5s ease-out infinite;
+}
+
+@keyframes dot-glow {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+    box-shadow: 0 0 6px 4px currentColor;
+  }
+}
