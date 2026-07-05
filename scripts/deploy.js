@@ -11,6 +11,8 @@ const {
   Address,
   nativeToScVal,
   xdr,
+  Operation,
+  scValToNative,
 } = require('@stellar/stellar-sdk');
 require('dotenv').config();
 
@@ -56,9 +58,7 @@ async function uploadWasm(wasmPath, keypair) {
   const wasm = fs.readFileSync(wasmPath);
   
   const account = await server.getAccount(keypair.publicKey());
-  const op = xdr.Operation.fromXDR(
-    TransactionBuilder.uploadContractWasmOperation({ wasm })
-  );
+  const op = Operation.uploadContractWasm({ wasm });
 
   const tx = new TransactionBuilder(account, {
     fee: (parseInt(BASE_FEE) * 20).toString(),
@@ -74,7 +74,7 @@ async function uploadWasm(wasmPath, keypair) {
     throw new Error(`Simulation failed: ${sim.error}`);
   }
 
-  const preparedTx = rpc.assembleTransaction(tx, sim);
+  const preparedTx = rpc.assembleTransaction(tx, sim).build();
   preparedTx.sign(keypair);
   
   console.log('Submitting upload transaction...');
@@ -86,21 +86,18 @@ async function uploadWasm(wasmPath, keypair) {
   console.log(`Polishing transaction status: ${response.hash}`);
   let status = await pollTxStatus(response.hash);
   
-  // Extract WASM Hash from transaction result
-  const meta = xdr.TransactionMeta.fromXDR(status.resultMetaXdr, 'base64');
-  const wasmHash = meta.v3().sorobanMeta().returnValue().bytes();
+  const meta = status.resultMetaXdr;
+  const wasmHash = meta.value().sorobanMeta().returnValue().bytes();
   console.log(`Uploaded WASM Hash: ${wasmHash.toString('hex')}`);
   return wasmHash;
 }
 
 async function deployContract(wasmHash, keypair) {
   const account = await server.getAccount(keypair.publicKey());
-  const op = xdr.Operation.fromXDR(
-    TransactionBuilder.createContractOperation({
-      wasmHash,
-      address: new Address(keypair.publicKey()),
-    })
-  );
+  const op = Operation.createCustomContract({
+    wasmHash,
+    address: new Address(keypair.publicKey()),
+  });
 
   const tx = new TransactionBuilder(account, {
     fee: (parseInt(BASE_FEE) * 10).toString(),
@@ -116,7 +113,7 @@ async function deployContract(wasmHash, keypair) {
     throw new Error(`Simulation failed: ${sim.error}`);
   }
 
-  const preparedTx = rpc.assembleTransaction(tx, sim);
+  const preparedTx = rpc.assembleTransaction(tx, sim).build();
   preparedTx.sign(keypair);
 
   const response = await server.sendTransaction(preparedTx);
@@ -125,9 +122,8 @@ async function deployContract(wasmHash, keypair) {
   }
 
   const status = await pollTxStatus(response.hash);
-  const meta = xdr.TransactionMeta.fromXDR(status.resultMetaXdr, 'base64');
-  const contractId = meta.v3().sorobanMeta().returnValue().address().contractId();
-  const contractAddress = Address.fromContractId(contractId).toString();
+  const meta = status.resultMetaXdr;
+  const contractAddress = scValToNative(meta.value().sorobanMeta().returnValue());
   console.log(`Contract Deployed at Address: ${contractAddress}`);
   return contractAddress;
 }
@@ -162,7 +158,7 @@ async function invokeInit(contractAddress, method, args, keypair) {
     throw new Error(`Simulation init failed: ${sim.error}`);
   }
 
-  const preparedTx = rpc.assembleTransaction(tx, sim);
+  const preparedTx = rpc.assembleTransaction(tx, sim).build();
   preparedTx.sign(keypair);
 
   const response = await server.sendTransaction(preparedTx);
@@ -218,7 +214,7 @@ async function main() {
       new Address(keypair.publicKey()).toScVal(),
       new Address(keypair.publicKey()).toScVal(),
       nativeToScVal('Platform Root Issuer'),
-      nativeToScVal(2) // ROLE_ISSUER = 2
+      xdr.ScVal.scvU32(2) // ROLE_ISSUER = 2
     ],
     keypair
   );

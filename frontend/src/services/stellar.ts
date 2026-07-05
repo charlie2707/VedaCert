@@ -267,7 +267,7 @@ export async function addInstitution(
         new Address(adminAddr).toScVal(),
         new Address(institutionAddr).toScVal(),
         nativeToScVal(name),
-        nativeToScVal(role)
+        xdr.ScVal.scvU32(role)
       )
     )
     .setTimeout(60)
