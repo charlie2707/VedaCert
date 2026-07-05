@@ -4,17 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { useWalletStore } from '../../state/walletStore';
 import { useTxStore } from '../../state/txStore';
 import { useFeedStore } from '../../state/feedStore';
-import { mintCertificate, revokeCertificate, verifyCertificate } from '../../services/stellar';
+import { mintCertificate, revokeCertificate } from '../../services/stellar';
 import {
   FilePlus2,
   Trash2,
   ListFilter,
-  CheckCircle,
   AlertTriangle,
   Award,
   Globe,
-  Loader2,
-  Search,
 } from 'lucide-react';
 
 interface CertificateLog {
@@ -27,7 +24,7 @@ interface CertificateLog {
 }
 
 export default function Dashboard() {
-  const { address, kit } = useWalletStore();
+  const { address } = useWalletStore();
   const { startTx, setProcessing, confirmTx, failTx } = useTxStore();
   const { addEvent } = useFeedStore();
 
@@ -51,7 +48,7 @@ export default function Dashboard() {
       // Seed with some mock log data
       const seed: CertificateLog[] = [
         {
-          certId: '0xabc123456789012345678901234567890123456789012345678901234567891111',
+          certId: '0xabc1234567890123456789012345678901234567890123456789012345671111',
           recipient: 'Alice Vance',
           metadataUri: 'ipfs://Qmdemohash1111',
           expiration: 'Never',
@@ -59,7 +56,7 @@ export default function Dashboard() {
           timestamp: Date.now() - 3600000 * 24,
         },
         {
-          certId: '0xdef999999999012345678901234567890123456789012345678901234567892222',
+          certId: '0xdef9999999990123456789012345678901234567890123456789012345672222',
           recipient: 'Bob Jones',
           metadataUri: 'ipfs://Qmdemohash2222',
           expiration: '2028-12-31',
@@ -86,7 +83,7 @@ export default function Dashboard() {
 
   const handleMint = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!address || !kit) {
+    if (!address) {
       alert('Connect wallet first.');
       return;
     }
@@ -111,10 +108,9 @@ export default function Dashboard() {
           recipient,
           metadataUri,
           expTimestamp,
-          kit,
           address
         );
-      } catch (err: any) {
+      } catch (err) {
         console.warn('Live minting failed, running mock simulation fallback:', err);
         // Fallback simulate process delay for premium presentation
         await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -155,14 +151,14 @@ export default function Dashboard() {
       setMetadataUri('');
       setExpiration('0');
       setGeneratedHash('');
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      failTx(err.message || 'Verification of issuer status or transaction signing failed.');
+      failTx((err as Error).message || 'Verification of issuer status or transaction signing failed.');
     }
   };
 
   const handleRevoke = async (hashToRevoke: string) => {
-    if (!address || !kit) {
+    if (!address) {
       alert('Connect wallet first.');
       return;
     }
@@ -177,8 +173,8 @@ export default function Dashboard() {
       
       let txHash;
       try {
-        txHash = await revokeCertificate(hashToRevoke, kit, address);
-      } catch (err: any) {
+        txHash = await revokeCertificate(hashToRevoke, address);
+      } catch (err) {
         console.warn('Live revocation failed, running mock simulation fallback:', err);
         await new Promise((resolve) => setTimeout(resolve, 3000));
         txHash = '0xmocktxhash' + Math.floor(Math.random() * 10000000);
@@ -212,9 +208,9 @@ export default function Dashboard() {
       if (revokeHash === hashToRevoke) {
         setRevokeHash('');
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      failTx(err.message || 'Revocation request failed.');
+      failTx((err as Error).message || 'Revocation request failed.');
     }
   };
 

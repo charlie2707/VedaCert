@@ -9,6 +9,7 @@ import {
   scValToNative,
   Address,
   xdr,
+  Account,
 } from '@stellar/stellar-sdk';
 import { StellarWalletsKit } from '@creit.tech/stellar-wallets-kit';
 
@@ -71,7 +72,7 @@ export async function verifyCertificate(certIdHex: string): Promise<CertificateD
     
     const viewTx = await server.simulateTransaction(
       new TransactionBuilder(
-        new Horizon.Account('GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF', '0'),
+        new Account('GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF', '0'),
         { fee: BASE_FEE.toString(), networkPassphrase: Networks.TESTNET }
       )
         .addOperation(
@@ -120,7 +121,6 @@ export async function mintCertificate(
   recipient: string,
   metadataUri: string,
   expirationDate: number,
-  walletKit: StellarWalletsKit,
   userAddress: string
 ): Promise<string> {
   const account = await server.getAccount(userAddress);
@@ -149,12 +149,14 @@ export async function mintCertificate(
     throw new Error(`Simulation failed: ${sim.error}`);
   }
 
-  const preparedTx = rpc.assembleTransaction(tx, sim);
-  const signedTx = await walletKit.signTransaction(preparedTx.toXDR());
-  const sentTx = await server.sendTransaction(TransactionBuilder.fromXDR(signedTx, Networks.TESTNET));
+  const preparedTx = rpc.assembleTransaction(tx, sim).build();
+  const { signedTxXdr } = await StellarWalletsKit.signTransaction(preparedTx.toXDR(), {
+    address: userAddress,
+  });
+  const sentTx = await server.sendTransaction(TransactionBuilder.fromXDR(signedTxXdr, Networks.TESTNET));
 
   if (sentTx.status === 'ERROR') {
-    throw new Error(`Submit transaction failed: ${sentTx.errorResultXdr}`);
+    throw new Error(`Submit transaction failed: ${sentTx.errorResult?.toXDR("base64")}`);
   }
 
   const pollRes = await pollTxStatus(sentTx.hash);
@@ -168,7 +170,6 @@ export async function mintCertificate(
 // Write: Revoke Certificate
 export async function revokeCertificate(
   certIdHex: string,
-  walletKit: StellarWalletsKit,
   userAddress: string
 ): Promise<string> {
   const account = await server.getAccount(userAddress);
@@ -193,12 +194,14 @@ export async function revokeCertificate(
     throw new Error(`Simulation failed: ${sim.error}`);
   }
 
-  const preparedTx = rpc.assembleTransaction(tx, sim);
-  const signedTx = await walletKit.signTransaction(preparedTx.toXDR());
-  const sentTx = await server.sendTransaction(TransactionBuilder.fromXDR(signedTx, Networks.TESTNET));
+  const preparedTx = rpc.assembleTransaction(tx, sim).build();
+  const { signedTxXdr } = await StellarWalletsKit.signTransaction(preparedTx.toXDR(), {
+    address: userAddress,
+  });
+  const sentTx = await server.sendTransaction(TransactionBuilder.fromXDR(signedTxXdr, Networks.TESTNET));
 
   if (sentTx.status === 'ERROR') {
-    throw new Error(`Submit failed: ${sentTx.errorResultXdr}`);
+    throw new Error(`Submit failed: ${sentTx.errorResult?.toXDR("base64")}`);
   }
 
   const pollRes = await pollTxStatus(sentTx.hash);
@@ -215,7 +218,7 @@ export async function getInstitution(institutionAddr: string): Promise<Instituti
     const contract = new Contract(REGISTRY_CONTRACT_ID);
     const viewTx = await server.simulateTransaction(
       new TransactionBuilder(
-        new Horizon.Account('GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF', '0'),
+        new Account('GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF', '0'),
         { fee: BASE_FEE.toString(), networkPassphrase: Networks.TESTNET }
       )
         .addOperation(
@@ -249,8 +252,7 @@ export async function addInstitution(
   adminAddr: string,
   institutionAddr: string,
   name: string,
-  role: number,
-  walletKit: StellarWalletsKit
+  role: number
 ): Promise<string> {
   const account = await server.getAccount(adminAddr);
   const contract = new Contract(REGISTRY_CONTRACT_ID);
@@ -276,12 +278,14 @@ export async function addInstitution(
     throw new Error(`Simulation failed: ${sim.error}`);
   }
 
-  const preparedTx = rpc.assembleTransaction(tx, sim);
-  const signedTx = await walletKit.signTransaction(preparedTx.toXDR());
-  const sentTx = await server.sendTransaction(TransactionBuilder.fromXDR(signedTx, Networks.TESTNET));
+  const preparedTx = rpc.assembleTransaction(tx, sim).build();
+  const { signedTxXdr } = await StellarWalletsKit.signTransaction(preparedTx.toXDR(), {
+    address: adminAddr,
+  });
+  const sentTx = await server.sendTransaction(TransactionBuilder.fromXDR(signedTxXdr, Networks.TESTNET));
 
   if (sentTx.status === 'ERROR') {
-    throw new Error(`Submit failed: ${sentTx.errorResultXdr}`);
+    throw new Error(`Submit failed: ${sentTx.errorResult?.toXDR("base64")}`);
   }
 
   const pollRes = await pollTxStatus(sentTx.hash);

@@ -1,70 +1,50 @@
 import { create } from 'zustand';
-import {
-  StellarWalletsKit,
-  WalletNetwork,
-  WalletType,
-  SUPPORTED_WALLETS,
-} from '@creit.tech/stellar-wallets-kit';
+import { StellarWalletsKit, Networks } from '@creit.tech/stellar-wallets-kit';
+import { defaultModules } from '@creit.tech/stellar-wallets-kit/modules/utils';
 
 interface WalletState {
   address: string | null;
-  walletType: WalletType | null;
-  network: WalletNetwork;
-  kit: StellarWalletsKit | null;
+  walletType: string | null;
+  network: Networks;
   isConnecting: boolean;
   error: string | null;
   initializeKit: () => void;
-  connect: (type: WalletType) => Promise<string | null>;
+  connect: (type: string) => Promise<string | null>;
   disconnect: () => void;
-  switchNetwork: (network: WalletNetwork) => void;
+  switchNetwork: (network: Networks) => void;
 }
 
 export const useWalletStore = create<WalletState>((set, get) => ({
   address: null,
   walletType: null,
-  network: WalletNetwork.TESTNET,
-  kit: null,
+  network: Networks.TESTNET,
   isConnecting: false,
   error: null,
 
   initializeKit: () => {
-    if (get().kit) return;
-
-    const kit = new StellarWalletsKit({
-      network: WalletNetwork.TESTNET,
-      selectedWallet: WalletType.FREIGHTER,
-      modules: SUPPORTED_WALLETS,
+    StellarWalletsKit.init({
+      network: Networks.TESTNET,
+      modules: defaultModules(),
     });
-
-    set({ kit });
   },
 
-  connect: async (type: WalletType) => {
+  connect: async (type: string) => {
     set({ isConnecting: true, error: null });
-    let { kit } = get();
     
-    if (!kit) {
-      kit = new StellarWalletsKit({
-        network: get().network,
-        selectedWallet: type,
-        modules: SUPPORTED_WALLETS,
-      });
-      set({ kit });
-    } else {
-      kit.setWallet(type);
-    }
-
     try {
-      const { address } = await kit.getAddress();
+      StellarWalletsKit.setNetwork(get().network);
+      StellarWalletsKit.setWallet(type);
+
+      const { address } = await StellarWalletsKit.getAddress();
       set({
         address,
         walletType: type,
         isConnecting: false,
       });
       return address;
-    } catch (err: any) {
+    } catch (err) {
       console.error('Wallet connection failed:', err);
-      const errMsg = err?.message || 'Connection request rejected by user';
+      const errMsg = (err as Error)?.message || 'Connection request rejected by user';
       set({
         error: errMsg,
         isConnecting: false,
@@ -77,18 +57,8 @@ export const useWalletStore = create<WalletState>((set, get) => ({
     set({ address: null, walletType: null });
   },
 
-  switchNetwork: (network: WalletNetwork) => {
-    const { kit } = get();
-    if (kit) {
-      // Re-instantiate kit for the new network
-      const newKit = new StellarWalletsKit({
-        network,
-        selectedWallet: get().walletType || WalletType.FREIGHTER,
-        modules: SUPPORTED_WALLETS,
-      });
-      set({ network, kit: newKit });
-    } else {
-      set({ network });
-    }
+  switchNetwork: (network: Networks) => {
+    StellarWalletsKit.setNetwork(network);
+    set({ network });
   },
 }));

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { BarChart3, TrendingUp, ShieldAlert, Cpu, Heart, CheckCircle } from 'lucide-react';
+import { BarChart3, TrendingUp, Cpu, Heart, CheckCircle } from 'lucide-react';
 
 export default function Analytics() {
   // Static high-fidelity metric data

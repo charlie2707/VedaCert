@@ -30,16 +30,16 @@ export default function Home() {
       const certData = await verifyCertificate(searchHash.trim());
       setResult(certData);
       setHasSearched(true);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      setErrorMessage(err.message || 'Failed to query certificate state.');
+      setErrorMessage((err as Error).message || 'Failed to query certificate state.');
     } finally {
       setIsVerifying(false);
     }
   };
 
   const loadDemoHash = () => {
-    setSearchHash('0xabc123456789012345678901234567890123456789012345678901234567891111');
+    setSearchHash('0xabc1234567890123456789012345678901234567890123456789012345671111');
   };
 
   const getStatus = (cert: CertificateData) => {
@@ -53,7 +53,7 @@ export default function Home() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center py-16 px-4 md:px-8 relative overflow-hidden bg-[#030303]">
       {/* Background glowing effects */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/2 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] md:w-[500px] md:h-[500px] bg-white/2 rounded-full blur-[80px] md:blur-[100px] pointer-events-none" />
 
       {/* Hero Section */}
       <div className="text-center max-w-2xl mb-12">
@@ -170,7 +170,7 @@ export default function Home() {
                       <div>
                         <p className="text-2xs text-zinc-500 uppercase tracking-wide">Anchor Link</p>
                         <a
-                          href={result.metadataUri}
+                          href={result.metadataUri.startsWith('ipfs://') ? `https://ipfs.io/ipfs/${result.metadataUri.slice(7)}` : result.metadataUri}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:underline mt-1"

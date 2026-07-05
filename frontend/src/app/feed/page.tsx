@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useFeedStore, FeedEvent } from '../../state/feedStore';
-import { Activity, Clock, ShieldAlert, Award, UserPlus, ToggleLeft, ToggleRight, Play, ExternalLink } from 'lucide-react';
+import { Activity, Clock, ShieldAlert, Award, UserPlus, Play, ExternalLink } from 'lucide-react';
 
 export default function ActivityFeed() {
   const { events, addEvent, clearEvents } = useFeedStore();
@@ -116,7 +116,7 @@ export default function ActivityFeed() {
         </div>
       ) : (
         <div className="relative border-l border-zinc-900 ml-4 pl-6 space-y-6">
-          {events.map((ev, idx) => {
+          {events.map((ev) => {
             const dateStr = new Date(ev.timestamp).toLocaleTimeString();
             return (
               <div 

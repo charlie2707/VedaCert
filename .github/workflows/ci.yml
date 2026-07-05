@@ -27,10 +27,6 @@ jobs:
       - name: Run Contract Tests
         run: cargo test --verbose
 
-      - name: Install Stellar CLI
-        run: |
-          cargo install --locked stellar-cli --version 22.0.1 || true
-
       - name: Build WASM binaries
         run: |
           cargo build --target wasm32-unknown-unknown --release

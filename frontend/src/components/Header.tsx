@@ -1,15 +1,19 @@
 'use client';
 
+/* eslint-disable @next/next/no-img-element */
+
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useWalletStore } from '../state/walletStore';
-import { WalletType } from '@creit.tech/stellar-wallets-kit';
+import { FREIGHTER_ID } from '@creit.tech/stellar-wallets-kit/modules/freighter';
+import { XBULL_ID } from '@creit.tech/stellar-wallets-kit/modules/xbull';
+import { LOBSTR_ID } from '@creit.tech/stellar-wallets-kit/modules/lobstr';
 import { Shield, Wallet, Disc, LogOut, Menu, X, Globe } from 'lucide-react';
 
 export default function Header() {
   const pathname = usePathname();
-  const { address, walletType, isConnecting, initializeKit, connect, disconnect, network } = useWalletStore();
+  const { address, isConnecting, initializeKit, connect, disconnect, network } = useWalletStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -17,7 +21,7 @@ export default function Header() {
     initializeKit();
   }, [initializeKit]);
 
-  const handleConnect = async (type: WalletType) => {
+  const handleConnect = async (type: string) => {
     setIsModalOpen(false);
     await connect(type);
   };
@@ -185,11 +189,15 @@ export default function Header() {
 
             <div className="flex flex-col gap-3">
               <button
-                onClick={() => handleConnect(WalletType.FREIGHTER)}
+                onClick={() => handleConnect(FREIGHTER_ID)}
                 className="glass-button w-full p-4 flex items-center justify-between text-sm group"
               >
                 <div className="flex items-center gap-3">
-                  <span className="h-8 w-8 rounded-full bg-zinc-800 flex items-center justify-center font-bold text-xs text-white">F</span>
+                  <img
+                    src="https://stellar.creit.tech/wallet-icons/freighter.png"
+                    alt="Freighter Logo"
+                    className="h-9 w-9 object-contain shrink-0"
+                  />
                   <div className="text-left">
                     <div className="font-semibold text-white">Freighter Wallet</div>
                     <div className="text-2xs text-zinc-400">Official extension wallet by SDF</div>
@@ -199,11 +207,15 @@ export default function Header() {
               </button>
 
               <button
-                onClick={() => handleConnect(WalletType.XBULL)}
+                onClick={() => handleConnect(XBULL_ID)}
                 className="glass-button w-full p-4 flex items-center justify-between text-sm group"
               >
                 <div className="flex items-center gap-3">
-                  <span className="h-8 w-8 rounded-full bg-zinc-800 flex items-center justify-center font-bold text-xs text-white">X</span>
+                  <img
+                    src="https://stellar.creit.tech/wallet-icons/xbull.png"
+                    alt="xBull Logo"
+                    className="h-9 w-9 object-contain shrink-0"
+                  />
                   <div className="text-left">
                     <div className="font-semibold text-white">xBull Wallet</div>
                     <div className="text-2xs text-zinc-400">Power-user wallet for Stellar</div>
@@ -213,11 +225,15 @@ export default function Header() {
               </button>
 
               <button
-                onClick={() => handleConnect(WalletType.LOBSTR)}
+                onClick={() => handleConnect(LOBSTR_ID)}
                 className="glass-button w-full p-4 flex items-center justify-between text-sm group"
               >
                 <div className="flex items-center gap-3">
-                  <span className="h-8 w-8 rounded-full bg-zinc-800 flex items-center justify-center font-bold text-xs text-white">L</span>
+                  <img
+                    src="https://stellar.creit.tech/wallet-icons/lobstr.png"
+                    alt="LOBSTR Logo"
+                    className="h-9 w-9 object-contain shrink-0"
+                  />
                   <div className="text-left">
                     <div className="font-semibold text-white">LOBSTR Wallet</div>
                     <div className="text-2xs text-zinc-400">Simple and secure mobile-friendly wallet</div>

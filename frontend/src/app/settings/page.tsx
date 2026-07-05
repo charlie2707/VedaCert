@@ -5,10 +5,10 @@ import { useWalletStore } from '../../state/walletStore';
 import { useTxStore } from '../../state/txStore';
 import { useFeedStore } from '../../state/feedStore';
 import { addInstitution, REGISTRY_CONTRACT_ID, VAULT_CONTRACT_ID } from '../../services/stellar';
-import { Settings, Save, ShieldAlert, UserPlus, RefreshCw, Key, Network } from 'lucide-react';
+import { Settings, Save, UserPlus, Key } from 'lucide-react';
 
 export default function SettingsPage() {
-  const { address, kit, network, switchNetwork } = useWalletStore();
+  const { address } = useWalletStore();
   const { startTx, setProcessing, confirmTx, failTx } = useTxStore();
   const { addEvent } = useFeedStore();
 
@@ -16,7 +16,7 @@ export default function SettingsPage() {
   const [instAddress, setInstAddress] = useState('');
   const [instName, setInstName] = useState('');
   const [instRole, setInstRole] = useState('2'); // default ROLE_ISSUER = 2
-  const [isSubmitActive, setIsSubmitActive] = useState(false);
+
 
   // Contract Addresses config state
   const [registryId, setRegistryId] = useState(REGISTRY_CONTRACT_ID);
@@ -39,7 +39,7 @@ export default function SettingsPage() {
 
   const handleRegisterInstitution = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!address || !kit) {
+    if (!address) {
       alert('Wallet not connected.');
       return;
     }
@@ -59,10 +59,9 @@ export default function SettingsPage() {
           address,
           instAddress.trim(),
           instName.trim(),
-          Number(instRole),
-          kit
+          Number(instRole)
         );
-      } catch (err: any) {
+      } catch (err) {
         console.warn('Live registration failed, running mock simulation fallback:', err);
         await new Promise((resolve) => setTimeout(resolve, 3000));
         txHash = '0xmocktxhash' + Math.floor(Math.random() * 10000000);
@@ -88,9 +87,9 @@ export default function SettingsPage() {
       // Clear input fields
       setInstAddress('');
       setInstName('');
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      failTx(err.message || 'Verification of admin status or signing rejected.');
+      failTx((err as Error).message || 'Verification of admin status or signing rejected.');
     }
   };
 
