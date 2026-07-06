@@ -35,7 +35,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
       StellarWalletsKit.setNetwork(get().network);
       StellarWalletsKit.setWallet(type);
 
-      const { address } = await StellarWalletsKit.getAddress();
+      const { address } = await StellarWalletsKit.fetchAddress();
       set({
         address,
         walletType: type,
