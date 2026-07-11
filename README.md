@@ -30,8 +30,8 @@
 
 * **GitHub Repository:** [charlie2707/VedaCert](https://github.com/charlie2707/VedaCert)
 * **Walkthrough Demo Video:**
-
-[VedaCert Demo Video Link]
+  
+https://github.com/user-attachments/assets/fed64151-ae00-4907-8809-7d7031d83fd7
 
 ---
 
