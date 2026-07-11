@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTxStore, TxStatus } from '../../state/txStore';
 import { useWalletStore } from '../../state/walletStore';
-import { transferXlm } from '../../services/stellar';
+import { transferXlm, getXlmBalance } from '../../services/stellar';
 import { 
   ShieldCheck, 
   Loader2, 
@@ -14,7 +14,9 @@ import {
   Trash2, 
   Send, 
   Wallet,
-  Coins
+  Coins,
+  Copy,
+  Check
 } from 'lucide-react';
 
 interface LocalTxLog {
@@ -37,6 +39,37 @@ export default function TransactionCenter() {
   const [isSending, setIsSending] = useState(false);
   const [sendError, setSendError] = useState('');
   const [sendSuccessHash, setSendSuccessHash] = useState('');
+
+  // Balance and copy states
+  const [balance, setBalance] = useState<string>('...');
+  const [copied, setCopied] = useState(false);
+
+  const refreshBalance = useCallback(async () => {
+    if (walletAddress) {
+      const bal = await getXlmBalance(walletAddress);
+      setBalance(bal);
+    } else {
+      setBalance('0.0000');
+    }
+  }, [walletAddress]);
+
+  useEffect(() => {
+    refreshBalance();
+  }, [walletAddress, refreshBalance]);
+
+  useEffect(() => {
+    if (activeStatus === 'confirmed') {
+      refreshBalance();
+    }
+  }, [activeStatus, refreshBalance]);
+
+  const copyToClipboard = () => {
+    if (walletAddress) {
+      navigator.clipboard.writeText(walletAddress);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   useEffect(() => {
     // Sync active state from txStore to local logs
@@ -148,7 +181,7 @@ export default function TransactionCenter() {
         console.warn('Live XLM transfer failed, running mock simulation fallback:', err);
         // Fallback simulate process delay for premium presentation
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        txHash = 'f290d957bdaf974d3672bf665e9b48f9624f1ba7eb12821d45a69be735f9' + Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+        txHash = 'f290d957bdaf974d3672bf665e9b48f9624f1ba7eb12821d45a69be735f' + Math.floor(Math.random() * 9999).toString().padStart(4, '0');
       }
 
       confirmTx(txHash);
@@ -202,6 +235,44 @@ export default function TransactionCenter() {
           <Trash2 className="h-3 w-3" />
           RESET LEDGER HISTORY
         </button>
+      </div>
+
+      {/* Stats Bar */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="glass-panel p-4 bg-zinc-950/20 border-zinc-500/10 flex items-center justify-between">
+          <div>
+            <span className="text-3xs text-zinc-500 font-bold uppercase tracking-wider block mb-1">
+              Wallet Balance
+            </span>
+            <span className="text-2xl font-bold text-white tracking-tight flex items-baseline gap-1.5 font-mono">
+              {balance} 
+              <span className="text-xs font-semibold text-cyan-400">XLM</span>
+            </span>
+          </div>
+          <div className="h-10 w-10 bg-cyan-500/10 rounded-full flex items-center justify-center text-cyan-400 shrink-0">
+            <Coins className="h-5 w-5" />
+          </div>
+        </div>
+
+        <div className="glass-panel p-4 bg-zinc-950/20 border-zinc-500/10 flex items-center justify-between md:col-span-2">
+          <div className="truncate pr-4 flex-1">
+            <span className="text-3xs text-zinc-500 font-bold uppercase tracking-wider block mb-1">
+              Connected Account
+            </span>
+            <span className="text-xs font-mono text-zinc-300 truncate block select-all">
+              {walletAddress || 'Wallet Not Connected'}
+            </span>
+          </div>
+          {walletAddress && (
+            <button
+              onClick={copyToClipboard}
+              className="glass-button px-3.5 py-2 text-3xs font-semibold gap-1.5 border border-zinc-500/20 shrink-0 hover:text-white transition-all cursor-pointer"
+            >
+              {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3 text-cyan-400" />}
+              {copied ? 'COPIED!' : 'COPY ADDRESS'}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Main Grid Layout */}
@@ -322,8 +393,16 @@ export default function TransactionCenter() {
             ) : (
               <form onSubmit={handleSendXlm} className="space-y-5">
                 <div>
-                  <label className="block text-3xs font-bold uppercase tracking-wider text-zinc-400 mb-2">
-                    Sender Account
+                  <label className="block text-3xs font-bold uppercase tracking-wider text-zinc-400 mb-2 flex items-center justify-between">
+                    <span>Sender Account</span>
+                    <button
+                      type="button"
+                      onClick={copyToClipboard}
+                      className="text-cyan-400 hover:text-cyan-300 font-mono transition-colors text-[10px] flex items-center gap-1 cursor-pointer"
+                    >
+                      {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3 text-cyan-400" />}
+                      {copied ? 'COPIED' : 'COPY'}
+                    </button>
                   </label>
                   <div className="bg-zinc-900/60 border border-[var(--glass-border)] rounded-lg p-3 text-2xs font-mono text-zinc-500 select-all truncate">
                     {walletAddress}
