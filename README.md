@@ -330,6 +330,8 @@ stellar contract invoke \
 * **Institution Admin Dashboard**:
   * Responsive credential ledger and quick-action panels for minting and revocation.
 * **CI/CD Pipeline Status**:
-  * GitHub Actions builder executing code compilation and contract testing on push and pull requests.
+  <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/51861b41-5b4e-4199-af2e-0accece33a4d" />
+
 * **Smart Contract Test Suite Output**:
-  * Rust native tests verified successfully.
+ <img width="727" height="102" alt="WhatsApp Image 2026-07-06 at 2 24 06 AM" src="https://github.com/user-attachments/assets/d3689702-f16f-4126-a163-c36e688d9c62" />
+
