@@ -1,4 +1,4 @@
-<h1 align="center">VedaCert Credentialing</h1>
+<h1 align="center">📜 VedaCert Credentialing 🔗</h1>
 
 <p align="center">
   <strong>A Decentralized, Tamper-Proof Credential Verification Platform built on the Stellar network using decoupled Soroban smart contracts.</strong>
@@ -23,18 +23,19 @@
   <a href="#architecture">Architecture</a> •
   <a href="#development">Development</a> •
   <a href="#deployment-guide">Deployment Guide</a> •
-  <a href="#verification">Verification Links</a> •
   <a href="#screenshots">Screenshots</a>
 </p>
 
 ---
 
 * **GitHub Repository:** [charlie2707/VedaCert](https://github.com/charlie2707/VedaCert)
-* **Walkthrough Demo Video:** [VedaCert Demo Video Link]
+* **Walkthrough Demo Video:**
+
+[VedaCert Demo Video Link]
 
 ---
 
-## Table of Contents
+## 📌 Table of Contents
 
 * [1. Product Overview & Problem Statement](#overview)
   * [The Problem](#the-problem)
@@ -43,28 +44,29 @@
 * [3. Directory Structure](#directory-structure)
 * [4. Technical Architecture & Component Flow](#architecture)
   * [1. Decoupled Access Control Flow](#decoupled-flow)
-  * [2. Inter-Contract Communication sequence](#inter-contract-communication)
-* [5. Smart Contract Storage Design](#storage-design)
+  * [2. Inter-Contract Communication Sequence](#inter-contract-communication)
+* [5. Smart Contract Design](#contract-design)
+  * [Data Storage & TTL Preservation](#storage-design)
+  * [Access Control](#access-control)
 * [6. Local Development & Testing](#development)
   * [Prerequisites](#prerequisites)
   * [Compilation & Testing](#compilation-testing)
-  * [Frontend Dev](#frontend-dev)
-* [7. Stellar Testnet Deployment Guide (Manual)](#deployment-guide)
+  * [Frontend Development](#frontend-dev)
+* [7. Stellar Testnet Deployment Guide](#deployment-guide)
   * [Step 1: Configure Deployer Identity](#deployer-identity)
-  * [Step 2: Compile WASM targets](#compile-wasm)
+  * [Step 2: Compile WASM Bytecodes](#compile-wasm)
   * [Step 3: Deploy Authority Registry](#deploy-registry)
   * [Step 4: Deploy Certification Vault](#deploy-vault)
   * [Step 5: Initialize Contracts & Authorize Issuer](#initialize-contracts)
 * [8. Deployed Contract Verification](#verification)
-  * [Contract Addresses](#contract-addresses)
-  * [Explorer Interaction Links](#interaction-links)
+  * [On-Chain Contract Verification Links](#verification-links)
 * [9. Security Considerations](#security)
 * [10. Project Media & Screenshots](#screenshots)
 
 ---
 
 <a name="overview"></a>
-## 1. Product Overview & Problem Statement
+## 🔍 1. Product Overview & Problem Statement
 
 ### The Problem
 Traditional educational credentials and enterprise certificates rely on centralized databases or paper verification, which are vulnerable to record tampering, database leaks, and validation latencies. Institutions must maintain expensive validation APIs, and verifiers must manually request verification, causing settlement times of days or weeks.
@@ -78,7 +80,7 @@ VedaCert resolves these structural limitations using:
 ---
 
 <a name="tech-stack"></a>
-## 2. Technical Stack
+## 🛠️ 2. Technical Stack
 
 * **Smart Contracts:** Rust, Soroban SDK
 * **Frontend:** Next.js 15 (App Router), TypeScript, Tailwind CSS, lucide-react
@@ -90,7 +92,9 @@ VedaCert resolves these structural limitations using:
 ---
 
 <a name="directory-structure"></a>
-## 3. Directory Structure
+## 📂 3. Directory Structure
+
+The project is organized with a feature-based architecture separating smart contracts, deployment tools, and the Next.js frontend app:
 
 ```
 VedaCert/
@@ -121,12 +125,16 @@ VedaCert/
     │   │   └── stellar.ts             # Transaction building & signing layers
     │   └── state/
     │       └── walletStore.ts         # Zustand wallet status manager
+    │       └── feedStore.ts           # Zustand global activity event store
+    │       └── txStore.ts             # Zustand transaction status store
+    ├── package.json                   # Frontend node packages
+    └── tsconfig.json                  # TypeScript settings
 ```
 
 ---
 
 <a name="architecture"></a>
-## 4. Technical Architecture & Component Flow
+## 📐 4. Technical Architecture & Component Flow
 
 <a name="decoupled-flow"></a>
 ### 1. Decoupled Access Control Flow
@@ -163,7 +171,7 @@ graph TD
 ```
 
 <a name="inter-contract-communication"></a>
-### 2. Inter-Contract Communication Flow (C2C)
+### 2. Inter-Contract Communication Sequence
 
 ```mermaid
 sequenceDiagram
@@ -184,21 +192,30 @@ sequenceDiagram
 
 ---
 
-<a name="storage-design"></a>
-## 5. Smart Contract Storage Design
+<a name="contract-design"></a>
+## 📜 5. Smart Contract Design
 
+<a name="storage-design"></a>
+### Data Storage & TTL Preservation
 * **Instance Storage**: Used for configuration flags, referencing target contract variables, and owner parameters (e.g. `Admin` in the registry and `Owner`/`Registry` references in the vault) to optimize transaction footprints.
 * **Persistent Storage**: Holds registry institution profiles (`InstitutionConfig`) and hash verification structures (`CertificateData`) with Soroban state leases to guarantee permanent storage integrity.
+
+<a name="access-control"></a>
+### Access Control
+* **Authorization Enforcement**: Every state-modifying function enforces authorization signatures using `address.require_auth()`.
+* **Inter-Contract Verification**: The Vault contract verifies that the caller has the authorized issuer role by calling `has_role(issuer, ROLE_ISSUER)` in the Registry contract dynamically via a contract-to-contract call.
 
 ---
 
 <a name="development"></a>
-## 6. Local Development & Testing
+## 🧪 6. Local Development & Testing
 
+<a name="prerequisites"></a>
 ### Prerequisites
 * Rust & Cargo (with `wasm32-unknown-unknown` target configured)
 * Node.js v20+
 
+<a name="compilation-testing"></a>
 ### Compilation & Testing
 ```bash
 # Run contract unit tests
@@ -208,7 +225,8 @@ cargo test
 cargo build --target wasm32-unknown-unknown --release
 ```
 
-### Frontend Dev
+<a name="frontend-dev"></a>
+### Frontend Development
 ```bash
 cd frontend
 npm install --ignore-scripts
@@ -218,20 +236,23 @@ npm run dev
 ---
 
 <a name="deployment-guide"></a>
-## 7. Stellar Testnet Deployment Guide (Manual)
+## 🚀 7. Stellar Testnet Deployment Guide
 
+<a name="deployer-identity"></a>
 ### Step 1: Configure Deployer Identity
 Generate and fund a test account:
 ```bash
 stellar keys generate vini --network testnet --fund
 ```
 
+<a name="compile-wasm"></a>
 ### Step 2: Compile WASM targets
 ```bash
 cargo build --target wasm32-unknown-unknown --release
 ```
 This generates the optimized WASM files in `target/wasm32-unknown-unknown/release/` (or `target/wasm32v1-none/release/` depending on the active rust toolchain target).
 
+<a name="deploy-registry"></a>
 ### Step 3: Deploy Authority Registry
 ```bash
 stellar contract deploy \
@@ -242,6 +263,7 @@ stellar contract deploy \
 ```
 * **Output Address**: `CALO4ABMH7IZBV5HBHOFUGQRZSB6AMLU4YQHABG23NVJ5PEQJC22L2NK`
 
+<a name="deploy-vault"></a>
 ### Step 4: Deploy Certification Vault
 ```bash
 stellar contract deploy \
@@ -252,6 +274,7 @@ stellar contract deploy \
 ```
 * **Output Address**: `CDSIRMRE43V475FH2Y2FVKONSZYOBLI7F3CLA4HKEYAJ6LDQ45AVNVAF`
 
+<a name="initialize-contracts"></a>
 ### Step 5: Initialize Contracts & Authorize Issuer
 
 1. **Initialize the Registry**:
@@ -291,21 +314,23 @@ stellar contract invoke \
 ---
 
 <a name="verification"></a>
-## 8. Deployed Contract Verification
+## 📊 8. Deployed Contract Verification
 
-### Contract Addresses
-* **Authority Registry Contract**: `CALO4ABMH7IZBV5HBHOFUGQRZSB6AMLU4YQHABG23NVJ5PEQJC22L2NK`
-* **Certification Vault Contract**: `CDSIRMRE43V475FH2Y2FVKONSZYOBLI7F3CLA4HKEYAJ6LDQ45AVNVAF`
-* **Deployer Owner Public Address**: `GBWDU3MGRM7KSDQBUPHXZS5FDD2T4LURXDNZRJ34FJIZOD6U4YW7N6WP`
+<a name="verification-links"></a>
+### On-Chain Contract Verification Links
 
-### Interaction Links
-* Authority Registry Contract: [Stellar Laboratory Link](https://lab.stellar.org/r/testnet/contract/CALO4ABMH7IZBV5HBHOFUGQRZSB6AMLU4YQHABG23NVJ5PEQJC22L2NK)
-* Certification Vault Contract: [Stellar Laboratory Link](https://lab.stellar.org/r/testnet/contract/CDSIRMRE43V475FH2Y2FVKONSZYOBLI7F3CLA4HKEYAJ6LDQ45AVNVAF)
+Once deployed, you can verify contract addresses and transaction logs on StellarExpert:
+
+| Contract / TX | Address / Hash | Explorer Link |
+| --- | --- | --- |
+| **Authority Registry Contract** | `CALO4ABMH7IZBV5HBHOFUGQRZSB6AMLU4YQHABG23NVJ5PEQJC22L2NK` | [View on StellarExpert](https://stellar.expert/explorer/testnet/contract/CALO4ABMH7IZBV5HBHOFUGQRZSB6AMLU4YQHABG23NVJ5PEQJC22L2NK) |
+| **Certification Vault Contract** | `CDSIRMRE43V475FH2Y2FVKONSZYOBLI7F3CLA4HKEYAJ6LDQ45AVNVAF` | [View on StellarExpert](https://stellar.expert/explorer/testnet/contract/CDSIRMRE43V475FH2Y2FVKONSZYOBLI7F3CLA4HKEYAJ6LDQ45AVNVAF) |
+| **Sample Minting TX Hash** | `f290d957bdaf974d3672bf665e9b48f9624f1ba7eb12821d45a69be735f980ac` | [View on StellarExpert](https://stellar.expert/explorer/testnet/tx/f290d957bdaf974d3672bf665e9b48f9624f1ba7eb12821d45a69be735f980ac) |
 
 ---
 
 <a name="security"></a>
-## 9. Security Considerations
+## 🛡️ 9. Security Considerations
 
 * **Decoupled Roles checks**: Dynamic role validations checked dynamically using C2C calls during validation steps.
 * **Storage Leases**: Automated persistent storage leases built directly to prevent state deletion.
@@ -313,25 +338,24 @@ stellar contract invoke \
 ---
 
 <a name="screenshots"></a>
-## 10. Project Media & Screenshots
+## 📸 10. Project Media & Screenshots
 
-### Deployed Smart Contracts CLI Outputs
-1. **Authority Registry Deployment on Testnet**
-   * Manually compiled and uploaded WASM bytecode, successfully deploying registry at `CALO4ABMH7IZBV5HBHOFUGQRZSB6AMLU4YQHABG23NVJ5PEQJC22L2NK`.
-   * *Status: Success*
+<!-- Screenshot Placeholder: Desktop UI -->
+### Desktop View
+<img width="1920" height="1080" alt="VedaCert Desktop View" src="https://github.com/charlie2707/VedaCert/raw/main/docs/screenshots/desktop_view.png" />
 
-2. **Certification Vault Deployment on Testnet**
-   * Uploaded WASM bytecode, deploying the vault instance at `CDSIRMRE43V475FH2Y2FVKONSZYOBLI7F3CLA4HKEYAJ6LDQ45AVNVAF`.
-   * *Status: Success*
+### Mobile Responsive View
+<img width="750" height="1599" alt="VedaCert Mobile View" src="https://github.com/charlie2707/VedaCert/raw/main/docs/screenshots/mobile_view.png" />
 
-### User Interface Layout
-* **Mobile Responsive VedaCert Landing Workspace**:
-  * Clean layout optimized for mobile screens, maintaining Web3 glowing highlights and font hierarchies.
-* **Institution Admin Dashboard**:
-  * Responsive credential ledger and quick-action panels for minting and revocation.
-* **CI/CD Pipeline Status**:
-  <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/51861b41-5b4e-4199-af2e-0accece33a4d" />
+### Multi-Wallet Integration
+<img width="1920" height="1080" alt="VedaCert Wallet Dialog" src="https://github.com/charlie2707/VedaCert/raw/main/docs/screenshots/wallet_view.png" />
 
-* **Smart Contract Test Suite Output**:
- <img width="727" height="102" alt="WhatsApp Image 2026-07-06 at 2 24 06 AM" src="https://github.com/user-attachments/assets/d3689702-f16f-4126-a163-c36e688d9c62" />
+<!-- Screenshot Placeholder: CI/CD Pipeline -->
+### Deployed Testnet Transaction
+<img width="1600" height="900" alt="Stellar Testnet Transaction" src="https://github.com/charlie2707/VedaCert/raw/main/docs/screenshots/testnet_tx.png" />
 
+### CI/CD Pipeline
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/51861b41-5b4e-4199-af2e-0accece33a4d" />
+
+### Test Output
+<img width="727" height="102" alt="WhatsApp Image 2026-07-06 at 2 24 06 AM" src="https://github.com/user-attachments/assets/d3689702-f16f-4126-a163-c36e688d9c62" />
