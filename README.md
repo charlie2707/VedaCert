@@ -342,17 +342,21 @@ Once deployed, you can verify contract addresses and transaction logs on Stellar
 
 <!-- Screenshot Placeholder: Desktop UI -->
 ### Desktop View
-<img width="1920" height="1080" alt="VedaCert Desktop View" src="https://github.com/charlie2707/VedaCert/raw/main/docs/screenshots/desktop_view.png" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/641ae7f8-abe7-4094-a648-25f63b06a8c5" />
+
 
 ### Mobile Responsive View
-<img width="750" height="1599" alt="VedaCert Mobile View" src="https://github.com/charlie2707/VedaCert/raw/main/docs/screenshots/mobile_view.png" />
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/cc09283c-c511-4464-9305-caa15f651ee3" />
+
 
 ### Multi-Wallet Integration
-<img width="1920" height="1080" alt="VedaCert Wallet Dialog" src="https://github.com/charlie2707/VedaCert/raw/main/docs/screenshots/wallet_view.png" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/83b98af9-41fa-43fb-a9a0-8e67e45b715e" />
+
 
 <!-- Screenshot Placeholder: CI/CD Pipeline -->
 ### Deployed Testnet Transaction
-<img width="1600" height="900" alt="Stellar Testnet Transaction" src="https://github.com/charlie2707/VedaCert/raw/main/docs/screenshots/testnet_tx.png" />
+<img width="1600" height="900" alt="WhatsApp Image 2026-07-06 at 2 30 38 AM" src="https://github.com/user-attachments/assets/d49e651e-947d-4ce2-a9f8-a62b5faac633" />
+
 
 ### CI/CD Pipeline
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/51861b41-5b4e-4199-af2e-0accece33a4d" />
