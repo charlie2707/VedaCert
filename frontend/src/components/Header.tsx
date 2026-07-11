@@ -9,7 +9,8 @@ import { useWalletStore } from '../state/walletStore';
 import { FREIGHTER_ID } from '@creit.tech/stellar-wallets-kit/modules/freighter';
 import { XBULL_ID } from '@creit.tech/stellar-wallets-kit/modules/xbull';
 import { LOBSTR_ID } from '@creit.tech/stellar-wallets-kit/modules/lobstr';
-import { Shield, Wallet, Disc, LogOut, Menu, X, Globe } from 'lucide-react';
+import { Shield, Wallet, Disc, LogOut, Menu, X, Globe, Copy, Check } from 'lucide-react';
+import { getXlmBalance } from '../services/stellar';
 
 export default function Header() {
   const pathname = usePathname();
@@ -17,9 +18,30 @@ export default function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Balance and copy states
+  const [balance, setBalance] = useState<string>('...');
+  const [copied, setCopied] = useState(false);
+
   useEffect(() => {
     initializeKit();
   }, [initializeKit]);
+
+  // Balance query effect
+  useEffect(() => {
+    if (address) {
+      getXlmBalance(address).then(bal => setBalance(bal));
+    } else {
+      setBalance('0.0000');
+    }
+  }, [address, pathname]);
+
+  const copyAddress = () => {
+    if (address) {
+      navigator.clipboard.writeText(address);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   const handleConnect = async (type: string) => {
     setIsModalOpen(false);
@@ -74,13 +96,31 @@ export default function Header() {
                 </span>
                 
                 <div className="flex items-center gap-2 rounded-lg border border-[var(--glass-border)] bg-zinc-900/40 px-3 py-1.5 text-sm text-zinc-300">
-                  <Disc className="h-4 w-4 text-emerald-400 animate-pulse" />
-                  <span className="font-mono">
+                  <Disc className="h-4 w-4 text-emerald-400 animate-pulse shrink-0" />
+                  
+                  {/* Balance Display */}
+                  <span className="text-xs font-mono font-bold text-cyan-400 border-r border-zinc-800 pr-2 shrink-0">
+                    {balance} XLM
+                  </span>
+
+                  {/* Wallet address */}
+                  <span className="font-mono text-xs pl-1">
                     {address.slice(0, 6)}...{address.slice(-4)}
                   </span>
+                  
+                  {/* Copy Button */}
+                  <button
+                    onClick={copyAddress}
+                    className="ml-1 hover:text-white text-zinc-500 transition-colors cursor-pointer shrink-0"
+                    title="Copy Address"
+                  >
+                    {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                  </button>
+
+                  {/* Disconnect Button */}
                   <button
                     onClick={disconnect}
-                    className="ml-2 hover:text-white transition-colors cursor-pointer"
+                    className="ml-1 border-l border-zinc-800 pl-2 hover:text-white text-zinc-500 transition-colors cursor-pointer shrink-0"
                     title="Disconnect"
                   >
                     <LogOut className="h-4 w-4" />
@@ -143,9 +183,20 @@ export default function Header() {
 
           {address ? (
             <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-2 text-sm text-zinc-400">
-                <Disc className="h-4 w-4 text-emerald-400" />
-                <span className="font-mono">{address}</span>
+              <div className="flex items-center gap-2 text-sm text-zinc-400 justify-between">
+                <div className="flex items-center gap-2 pr-2 overflow-hidden truncate">
+                  <Disc className="h-4 w-4 text-emerald-400 shrink-0" />
+                  <span className="font-mono text-xs truncate select-all">{address}</span>
+                </div>
+                <button
+                  onClick={copyAddress}
+                  className="text-xs text-cyan-400 font-semibold px-2 py-1 border border-cyan-500/10 rounded cursor-pointer"
+                >
+                  {copied ? 'COPIED' : 'COPY'}
+                </button>
+              </div>
+              <div className="text-xs font-mono font-bold text-cyan-400">
+                Balance: {balance} XLM
               </div>
               <button
                 onClick={() => {
