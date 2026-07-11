@@ -10,6 +10,8 @@ import {
   Address,
   xdr,
   Account,
+  Operation,
+  Asset,
 } from '@stellar/stellar-sdk';
 import { StellarWalletsKit } from '@creit.tech/stellar-wallets-kit';
 
@@ -295,4 +297,39 @@ export async function addInstitution(
   }
 
   return sentTx.hash;
+}
+
+// Write: Transfer Native XLM
+export async function transferXlm(
+  recipientAddr: string,
+  amount: string,
+  senderAddr: string
+): Promise<string> {
+  const account = await server.getAccount(senderAddr);
+  
+  const tx = new TransactionBuilder(account, {
+    fee: BASE_FEE.toString(),
+    networkPassphrase: Networks.TESTNET,
+  })
+    .addOperation(
+      Operation.payment({
+        destination: recipientAddr,
+        asset: Asset.native(),
+        amount: amount,
+      })
+    )
+    .setTimeout(60)
+    .build();
+
+  const { signedTxXdr } = await StellarWalletsKit.signTransaction(tx.toXDR(), {
+    address: senderAddr,
+  });
+
+  const response = await horizonServer.submitTransaction(TransactionBuilder.fromXDR(signedTxXdr, Networks.TESTNET));
+  
+  if (!response.successful) {
+    throw new Error('Transaction submission failed on Horizon');
+  }
+
+  return response.hash;
 }
