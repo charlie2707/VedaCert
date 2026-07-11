@@ -5,8 +5,8 @@
 </p>
 
 <p align="center">
-  <a href="https://vedacert.vercel.app/" target="_blank">
-    <img src="https://img.shields.io/badge/LIVE_DEMO-VEDACERT.VERCEL.APP-cyan?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+  <a href="https://veda-cert.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/LIVE_DEMO-VEDA--CERT.VERCEL.APP-cyan?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
   </a>
 </p>
 
