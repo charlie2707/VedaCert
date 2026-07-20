@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useWalletStore } from '../state/walletStore';
+import { useWalletStore } from '../services/walletStore';
 import { FREIGHTER_ID } from '@creit.tech/stellar-wallets-kit/modules/freighter';
 import { XBULL_ID } from '@creit.tech/stellar-wallets-kit/modules/xbull';
 import { LOBSTR_ID } from '@creit.tech/stellar-wallets-kit/modules/lobstr';

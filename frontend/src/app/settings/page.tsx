@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useWalletStore } from '../../state/walletStore';
+import { useWalletStore } from '../../services/walletStore';
 import { useTxStore } from '../../state/txStore';
 import { useFeedStore } from '../../state/feedStore';
 import { addInstitution, REGISTRY_CONTRACT_ID, VAULT_CONTRACT_ID } from '../../services/stellar';

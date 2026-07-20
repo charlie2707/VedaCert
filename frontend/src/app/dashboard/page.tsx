@@ -11,7 +11,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useWalletStore } from '../../state/walletStore';
+import { useWalletStore } from '../../services/walletStore';
 import { useTxStore } from '../../state/txStore';
 import { useFeedStore } from '../../state/feedStore';
 import { mintCertificate, revokeCertificate } from '../../services/stellar';

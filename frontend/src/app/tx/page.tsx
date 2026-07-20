@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTxStore, TxStatus } from '../../state/txStore';
-import { useWalletStore } from '../../state/walletStore';
+import { useWalletStore } from '../../services/walletStore';
 import { transferXlm, getXlmBalance } from '../../services/stellar';
 import { 
   ShieldCheck, 
